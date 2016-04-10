@@ -1,0 +1,134 @@
+Due date: 4/17/2016 @ 11:59pm
+
+Assignment:
+~~~~~~~~~~~
+
+    Please don't forget to answer the questions in REPORT.txt
+
+    Please notice that we'll be running in 32 bit mode (8 32 bit registers,
+    arguments passed on the stack, ...)
+
+    Please notice that we'll be running on bare hardware, no operating system,
+    no libc, no printf. Minimum helper functions are provided
+
+    Practice your memory management skills by implementing simple, in-kernel,
+page mapping, un-mapping, and fault handling.
+
+    Your assignment is to finish the implementation of the vmm API defined
+in kernel/vmm.h.
+
+        - void paging(void)    -- enable paging
+
+        - uint32_t map(va uint32_t, pa uint32_t)
+                               -- modify the page tables in order to create
+                                  a mapping from va to pa (the offset bits
+                                  are ignored)
+
+        - int forget(va)       -- remove the mapping for the page containing
+                                  the given va
+                                      returns 0 if the page was clean
+                                      returns 1 if the page was dirty
+
+        - void share(src,dest) -- map the page containing dest to the same
+                                  frame to which the page containing src is
+                                  mapped
+
+        - void pageFault(va)   -- called by the exception handler to handle
+                                  a fault for the given va
+
+        - uint32_t last(void)  -- returns the last va that caused a page fault
+
+The physical address space map
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+0M - 1M      the kernel
+1M - 2M      available frames
+
+The virtual address space map
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+0M - 2M       reserved for kernel use
+2M - 4G       available
+
+Explicit mapping
+~~~~~~~~~~~~~~~~
+
+The page containing VA can be mapped to the frame containing PA using
+the following call
+
+    map(va,pa)
+
+Demand mapping
+~~~~~~~~~~~~~~
+
+Attempting to use a virtual address that's not mapped causes a page fault. The
+page fault should be resolved using the following rules:
+
+- if the va is >= 0x80000000, the frame is initially filled with values that
+  satisfy the following invariant (address-filled)
+
+      (*((uint32_t *) va)) == va   # va % 4 == 0
+
+- if the va is < 0x80000000, the frame is zero-filled
+
+Simplifying assumptions
+~~~~~~~~~~~~~~~~~~~~~~~
+
+- we always run in supervisor mode
+
+- the machine has 2M of physical memory
+
+- the kernel uses physical memory in the range 0 to 1M, the rest is available
+  for allocation
+
+- all mappings are RW
+
+- kernel/kernel.c contains the kernel entry point and the testing
+  code (leave it alone)
+
+- you're free to add, remove, or modify other files
+                            
+To compile:
+~~~~~~~~~~~
+
+    make
+
+To run test:
+~~~~~~~~~~~~
+
+    make clean test
+
+To make the output less noisy:
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    make -s clean test
+
+To run by hand
+~~~~~~~~~~~~~~
+
+    make
+    qemu -nographic --serial mon:stdio -hdc kernel/kernel.img
+
+To attach with gdb
+~~~~~~~~~~~~~~~~~~
+
+It's a good idea to change the -O3 to -O0 in common.mak if you want to debug
+with gdb
+
+    make
+    qemu -S -s -nographic --serial mon:stdio -hdc kernel/kernel.img
+
+  then in another window
+
+    > gdb kernel/kernel
+    (gdb) target remote localhost:1234
+    (gdb) # define breakpoint, etc
+    (gdb) cont
+
+Files
+~~~~~
+
+    kernel/vmm.c -- the only file you're allowed to change
+    kernel/machine.S, kernel/console.c -- useful functions
+    kernel/kernel.c -- tests
+

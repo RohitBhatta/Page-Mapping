@@ -1,0 +1,29 @@
+(1) Explain the sequence of events that leads pageFault getting called: what
+    the test program does, what the architecture does, and what the kernel
+    code does
+
+
+
+
+(2) Explain the TLB. What problem does it solve? what problem does it
+    introduce?
+
+
+
+
+
+
+(3) Explain the strange loop before calling paging(). Why is it there? What
+    happens if you call paging() without this loop?
+
+    for (uint32_t p = 0; p < 0x200000; p += 4096) {
+        map(p,p);
+    }
+
+
+
+
+
+(4) Explain what the assembly function pageFaultHandler does. Who calls it?
+    Why is it doing what's doing with the registers?
+
