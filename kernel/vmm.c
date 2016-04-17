@@ -50,12 +50,10 @@ uint32_t frame(void) {
 extern void vmm_on(uint32_t);
 
 void paging(void) {
-    //MISSING();
     vmm_on((uint32_t) pd);
 }
 
 uint32_t last(void) {
-    //MISSING();
     return lastVA;
 }
 
@@ -64,7 +62,6 @@ void pageFault(uint32_t addr) {
     putStr("fault at ");
     putHex(addr);
     putStr("\n");
-    //MISSING();
     lastVA = addr;
     uint32_t pa = frame();
     table_s *table = (table_s *) pa;
@@ -78,7 +75,6 @@ void pageFault(uint32_t addr) {
 
 /* Create a new mapping from va to pa */
 void map(uint32_t va, uint32_t pa) {
-    //MISSING();
     if (first == 0) {
         first++;
         pd = (table_s *) frame();
@@ -99,7 +95,6 @@ void map(uint32_t va, uint32_t pa) {
 
 /* unmap the given va */
 int forget(uint32_t va) {
-    //MISSING()
     uint32_t pdIndex = (uint32_t) va >> 22 & 0x3FF;
     uint32_t ptIndex = (uint32_t) va >> 12 & 0x3FF;
 
@@ -118,7 +113,6 @@ int forget(uint32_t va) {
 }
 
 void share(uint32_t from, uint32_t to) {
-    //MISSING();
     //Forget to
     forget(to);
 
