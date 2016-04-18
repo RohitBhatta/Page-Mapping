@@ -2,7 +2,7 @@
     the test program does, what the architecture does, and what the kernel
     code does
 
-    The function pageFault is called by the architecture whenever a page fault occurs. The CPU puts the address which called the fault into CR2. Then pageFaultHandler is called. It is described in question number 4. A pageFault occurs when an address greater than 0x20000000 is trying to be mapped. There isn't space for it, so we map it to an arbitrary physical address provided by the frame() function in our pageFault() function.
+    The function pageFault is called by the architecture whenever a page fault occurs. The CPU puts the address which called the fault into CR2. Then pageFaultHandler is called. It is described in question number 4. A pageFault occurs when an address greater than 0x20000000 is trying to be mapped. There isn't space for it, so we map it to an arbitrary physical address provided by the frame() function in our pageFault() function. What the test in kernel.c does is purposely map an address larger than 0x20000000 to see how the programmer handles it. It uses a unit test to determine if the actual value returned is equal to the expected value, once peek is called to check what the physical address to that corresponding virtual address is.
 
 
 (2) Explain the TLB. What problem does it solve? what problem does it
@@ -28,3 +28,7 @@
     Why is it doing what's doing with the registers?
 
     The function pageFaultHandler saves all the registers along with the EFLAGS register and then grabs the address that caused the fault from CR2 and passes it to the pageFault() function. Once the function returns, the values of all the registers are restored and it returns from the interrupt using iret.
+
+
+Citations:
+Harsh explained the different use of the struct in creating the pd and pt's in mapping. Sueanne helped me understand how the pageFault function differed from the map function in terms of mapping a virtual address to a physical address.
